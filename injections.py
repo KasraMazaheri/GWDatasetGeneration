@@ -31,7 +31,7 @@ def injection(config, data_dir: str, device: str, inject: bool):
     # Total length of data to sample
     window_length = psd_length + fduration + kernel_length
 
-    fnames = list(background_dir.iterdir())
+    fnames = list(data_dir.iterdir())
     dataloader = Hdf5TimeSeriesDataset(
         fnames=fnames,
         channels=ifos,
