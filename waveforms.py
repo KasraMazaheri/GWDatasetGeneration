@@ -75,13 +75,17 @@ def generate_signals(config, device: str, save: bool):
     dec = Cosine()
     psi = Uniform(0, torch.pi)
     phi = Uniform(-torch.pi, torch.pi)
+    
+    params['dec'] = dec.sample((num_waveforms,)).to(device)
+    params['psi'] = psi.sample((num_waveforms,)).to(device)
+    params['phi'] = phi.sample((num_waveforms,)).to(device)
 
     tensors, vertices = get_ifo_geometry(*ifos)
 
     waveforms = compute_observed_strain(
-        dec=dec.sample((num_waveforms,)).to(device),
-        psi=psi.sample((num_waveforms,)).to(device),
-        phi=phi.sample((num_waveforms,)).to(device),
+        dec=params['dec'],
+        psi=params['psi'],
+        phi=params['phi'],
         detector_tensors=tensors.to(device),
         detector_vertices=vertices.to(device),
         sample_rate=sample_rate,
@@ -91,7 +95,7 @@ def generate_signals(config, device: str, save: bool):
     if save:
         return True
     else:
-        return waveforms
+        return waveforms, params
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"

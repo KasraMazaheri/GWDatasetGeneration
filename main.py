@@ -17,14 +17,16 @@ def main(config_path: str, data_dir: str, output_dir: str):
         os.makedirs(out_dir)
 
     # generate signals
-    signals = injection(config, data_dir=data_dir, device=device, inject=True)
+    signals, params = injection(config, data_dir=data_dir, device=device, inject=True)
     sig_data = signals.cpu().numpy()
     with h5py.File(out_dir / 'sig.h5', 'w') as h5f:
         h5f.create_dataset('data', data=sig_data)
-    del signals, sig_data
+        for k in params.keys():
+            h5f.create_dataset(k, data=params[k].cpu().numpy())
+    del signals, sig_data, params
 
     # generate backgrounds
-    backgrounds = injection(config, data_dir=data_dir, device=device, inject=False)
+    backgrounds, _ = injection(config, data_dir=data_dir, device=device, inject=False)
     bkg_data = backgrounds.cpu().numpy()
     with h5py.File(out_dir / 'bkg.h5', 'w') as h5f:
         h5f.create_dataset('data', data=bkg_data)

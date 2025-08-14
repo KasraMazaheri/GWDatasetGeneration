@@ -60,7 +60,7 @@ def injection(config, data_dir: str, device: str, inject: bool):
     kernel = background_samples[..., psd_size:]
 
     if inject:
-        waveforms = generate_signals(config, device, save=False) 
+        waveforms, params = generate_signals(config, device, save=False) 
 
         pad = int(fduration / 2 * sample_rate)
         injected = kernel.detach().clone()
@@ -69,10 +69,11 @@ def injection(config, data_dir: str, device: str, inject: bool):
         whitened_injected = whiten(injected, psd)
     else:
         whitened_injected = whiten(kernel, psd)
+        params = None
 
     print(f"Kernel shape: {kernel.shape}")
     print(f"Whitened kernel shape: {whitened_injected.shape}")
-    return whitened_injected
+    return whitened_injected, params
 
 if __name__ == "__main__":
     device = "cuda" if torch.cuda.is_available() else "cpu"
