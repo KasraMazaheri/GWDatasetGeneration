@@ -1,12 +1,12 @@
 general:
+    num_waveforms: 500
     waveform_duration: 8 #desired duration of time-domain waveform
     sample_rate: 2048
+    right_pad: 0.5 #coalescence point of signal [s] from right edge of window 
     f_min: 20
     f_max: 1024
     f_ref: 20
-    right_pad: 0.5 #coalescence point of signal [s] from right edge of window 
     ifos: ['H1','L1']
-    num_waveforms: 500
 
 waveform:
     chirp_mass: 
@@ -30,7 +30,7 @@ waveform:
     inclination: 
         func: ml4gw.distributions.Sine
 
-injection:
+whiten:
     fftlength: 2
     average: median
     overlap: null
