@@ -16,4 +16,3 @@ The generated output are `sig.h5` and `bkg.h5` files, which contain the time ser
 ## ToDos
 - add configuration for BNS signals
 - reject signals below certain SNR
-- add some jupyter plotting
