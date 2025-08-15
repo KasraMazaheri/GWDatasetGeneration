@@ -14,8 +14,6 @@ with
 The generated output are `sig.h5` and `bkg.h5` files, which contain the time series for the two detectors (`data`) to be used for classification. The `sig.h5` files additionally contain all parameters defining the signal waveform to be used in regression tasks or for more detailed studies.
 
 ## ToDos
-- add SNR calculation for signals
 - add configuration for BNS signals
 - reject signals below certain SNR
-- check sky localization setting (isotropic)
 - add some jupyter plotting
