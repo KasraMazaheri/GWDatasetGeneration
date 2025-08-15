@@ -8,6 +8,7 @@ from ml4gw.dataloading import Hdf5TimeSeriesDataset
 from ml4gw.transforms import Whiten
 from utils import load_config
 from waveforms import generate_signals
+from ml4gw.gw import compute_network_snr
 
 def injection(config, data_dir: str, device: str, inject: bool):
 
@@ -30,6 +31,8 @@ def injection(config, data_dir: str, device: str, inject: bool):
 
     # Total length of data to sample
     window_length = psd_length + fduration + kernel_length
+    num_samples = int(config.general.waveform_duration * sample_rate)
+    num_freqs = num_samples // 2 + 1
 
     fnames = list(data_dir.iterdir())
     dataloader = Hdf5TimeSeriesDataset(
@@ -65,8 +68,17 @@ def injection(config, data_dir: str, device: str, inject: bool):
         pad = int(fduration / 2 * sample_rate)
         injected = kernel.detach().clone()
         injected[:, :, pad:-pad] += waveforms[..., -kernel_size:]
-        # And whiten with the same PSDs as before
         whitened_injected = whiten(injected, psd)
+
+        # compute network SNR
+
+        if psd.shape[-1] != num_freqs:
+            # Adding dummy dimensions for consistency
+            while psd.ndim < 3:
+                psd = psd[None]
+            psd = torch.nn.functional.interpolate(psd, size=(num_freqs,), mode="linear")
+        network_snr = compute_network_snr(responses=waveforms, psd=psd, sample_rate=sample_rate, highpass=f_min)
+        params['snr'] = network_snr
     else:
         whitened_injected = whiten(kernel, psd)
         params = None

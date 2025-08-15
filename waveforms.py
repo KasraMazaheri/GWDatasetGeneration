@@ -71,7 +71,6 @@ def generate_signals(config, device: str, save: bool):
     hc, hp = waveform_generator(**params)
 
     # Waveform projection
-    #TODO: check if isotropic
     dec = Cosine()
     psi = Uniform(0, torch.pi)
     phi = Uniform(-torch.pi, torch.pi)
