@@ -4,7 +4,7 @@ from ml4gw.distributions import PowerLaw, Sine, Cosine, DeltaFunction
 from torch.distributions import Uniform
 import yaml
 import importlib
-from ml4gw.waveforms import IMRPhenomD
+from ml4gw.waveforms import IMRPhenomD, TaylorF2
 from ml4gw.waveforms.generator import TimeDomainCBCWaveformGenerator
 from ml4gw.waveforms.conversion import chirp_mass_and_mass_ratio_to_components
 from ml4gw.gw import get_ifo_geometry, compute_observed_strain
@@ -32,6 +32,7 @@ def generate_signals(config, device: str, save: bool):
 
     param_dict = {}
     attrs = [x for x in dir(waveform_dict) if '__' not in x]
+    params = {}
     for k in attrs:
         attrs_config = getattr(waveform_dict, k)
         func_path = getattr(attrs_config, 'func')
@@ -42,16 +43,34 @@ def generate_signals(config, device: str, save: bool):
 
         if 'args' in dir(attrs_config):
             args = getattr(attrs_config, 'args')
+            args = [a if not isinstance(a, str) else params[a] for a in args]
             param_dict[k] = func(*args)
         else:
             param_dict[k] = func()
 
-    # And then sample from each of those distributions
-    params = {
-            k: v.sample((num_waveforms,)).to(device) for k, v in param_dict.items()
-    }
+        if k == 'mass_2':
+            params[k] = param_dict[k].sample().to(device)
+        else:
+            params[k] = param_dict[k].sample((num_waveforms,)).to(device)
 
-    approximant = IMRPhenomD().to(device)
+    if config.general.type=='BNS':
+
+        approximant = TaylorF2().to(device)
+
+        # get correct parameters
+        q = params['mass_2']/params['mass_1']
+        params['chirp_mass'] = (q/(1+q)**2)**(3/5.)*(params['mass_2']+params['mass_1'])
+        params['mass_ratio'] = q
+        params["chi1"], params["chi2"] = params["s1z"], params["s2z"]
+
+    else:
+        approximant = IMRPhenomD().to(device)
+
+        params["mass_1"], params["mass_2"] = chirp_mass_and_mass_ratio_to_components(
+            params["chirp_mass"], params["mass_ratio"]
+        )
+        params["s1z"], params["s2z"] = params["chi1"], params["chi2"]
+
 
     waveform_generator = TimeDomainCBCWaveformGenerator(
         approximant=approximant,
@@ -61,12 +80,6 @@ def generate_signals(config, device: str, save: bool):
         right_pad=right_pad,
         f_ref=f_ref,
     ).to(device)
-
-    #TODO: generalize this for BNS signals
-    params["mass_1"], params["mass_2"] = chirp_mass_and_mass_ratio_to_components(
-        params["chirp_mass"], params["mass_ratio"]
-    )
-    params["s1z"], params["s2z"] = params["chi1"], params["chi2"]
 
     hc, hp = waveform_generator(**params)
 
