@@ -8,7 +8,9 @@ from ml4gw.dataloading import Hdf5TimeSeriesDataset
 from ml4gw.transforms import Whiten
 from utils import load_config
 from waveforms import generate_signals
-from ml4gw.gw import compute_network_snr
+from ml4gw.gw import compute_network_snr,reweight_snrs
+from ml4gw.distributions import PowerLaw
+import importlib
 
 def injection(config, data_dir: str, device: str, inject: bool):
 
@@ -67,16 +69,28 @@ def injection(config, data_dir: str, device: str, inject: bool):
 
         pad = int(fduration / 2 * sample_rate)
         injected = kernel.detach().clone()
-        injected[:, :, pad:-pad] += waveforms[..., -kernel_size:]
-        whitened_injected = whiten(injected, psd)
 
-        # compute network SNR
-
+        # calculation and reweighting of SNRs
         if psd.shape[-1] != num_freqs:
             # Adding dummy dimensions for consistency
             while psd.ndim < 3:
                 psd = psd[None]
             psd = torch.nn.functional.interpolate(psd, size=(num_freqs,), mode="linear")
+
+        func_path = config.snr_reweighting.func
+        module_name, func_name = func_path.rsplit(".", 1)
+        module = importlib.import_module(module_name)
+        func = getattr(module, func_name)
+        args = config.snr_reweighting.args
+        target_snrs = func(*args).sample((num_waveforms,)).to(device)
+
+        #target_snrs = PowerLaw(4, 100, -3).sample((num_waveforms,)).to(device)
+        waveforms = reweight_snrs(responses=waveforms,target_snrs=target_snrs,psd=psd,sample_rate=sample_rate,highpass=f_min,)
+
+        injected[:, :, pad:-pad] += waveforms[..., -kernel_size:]
+        whitened_injected = whiten(injected, psd)
+
+        # compute network SNR
         network_snr = compute_network_snr(responses=waveforms, psd=psd, sample_rate=sample_rate, highpass=f_min)
         params['snr'] = network_snr
     else:
