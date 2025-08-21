@@ -1,4 +1,5 @@
 general:
+    type: BBH
     num_waveforms: 500
     waveform_duration: 8 #desired duration of time-domain waveform
     sample_rate: 2048
@@ -36,3 +37,7 @@ whiten:
     overlap: null
     psd_length: 16
     fduration: 2
+
+snr_reweighting:
+        func: ml4gw.distributions.PowerLaw
+        args: [12,100,-3]
