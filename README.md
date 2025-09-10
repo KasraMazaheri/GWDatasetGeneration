@@ -7,7 +7,7 @@ To generate data, run
 python main.py --config config.yaml --data path/to/data/folder --out path/to/output/directory
 ```
 with
-- `config`: is the config file containing all general and signal-specific setups. Currently, `config.yaml` will only generate BBH signals.
+- `config`: This is the config file containing all general and signal-specific setups. In the `config` folder, you can find example configs for BBH and BNS signals.
 - `data`: path to directory containing open (background) data. The data can be downloaded using the `load_data.py` script.
 - `out`: output directory where to store the dataset.
 
