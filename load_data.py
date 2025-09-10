@@ -13,7 +13,7 @@ from tqdm import tqdm
 
 BASE_URL = "https://gwosc.org/api/v2/runs/O3a/timelines"
 
-def fetch_segments(detector="H1"):
+def fetch_segments(config, detector="H1"):
     timeline = f"{detector}_DATA"
     url = f"{BASE_URL}/{timeline}/segments"
     
@@ -26,8 +26,9 @@ def fetch_segments(detector="H1"):
     for seg in data["results"]:
         start = int(seg['start'])
         end = int(seg['stop'])
+        duration = end - start
         segments.append(Segment(start, end))
-    
+
     return SegmentList(segments)
 
 
@@ -38,7 +39,7 @@ def load_data(config, data_dir: str):
 
     segments = {}
     for ifo in config.general.ifos:
-        segments[ifo] = fetch_segments(ifo)
+        segments[ifo] = fetch_segments(config, ifo)
     network_segments = reduce(operator.and_, segments.values())
 
     #segments = [
@@ -51,15 +52,16 @@ def load_data(config, data_dir: str):
 
     for (start, end) in tqdm(network_segments):
         duration = end - start
-        fname = background_dir / f"background-{start}-{duration}.hdf5"
-        if fname.exists():
-            continue
+        if duration >= config.general.waveform_duration:
+            fname = background_dir / f"background-{start}-{duration}.hdf5"
+            if fname.exists():
+                continue
 
-        ts_dict = TimeSeriesDict()
-        for ifo in config.general.ifos:
-            ts_dict[ifo] = TimeSeries.fetch_open_data(ifo, start, end, cache=True)
-        ts_dict = ts_dict.resample(config.general.sample_rate)
-        ts_dict.write(fname, format="hdf5")
+            ts_dict = TimeSeriesDict()
+            for ifo in config.general.ifos:
+                ts_dict[ifo] = TimeSeries.fetch_open_data(ifo, start, end, cache=True)
+            ts_dict = ts_dict.resample(config.general.sample_rate)
+            ts_dict.write(fname, format="hdf5")
 
 if __name__ == '__main__':
     config = load_config(config_path='configs/config_BNS.yaml')
