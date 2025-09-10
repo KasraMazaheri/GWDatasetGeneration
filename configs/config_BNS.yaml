@@ -1,6 +1,6 @@
 general:
     type: 'BNS'
-    num_waveforms: 5
+    num_waveforms: 300
     waveform_duration: 64 #desired duration of time-domain waveform
     sample_rate: 2048
     right_pad: 1.0 #coalescence point of signal [s] from right edge of window 
@@ -40,4 +40,4 @@ whiten:
 
 snr_reweighting: 
         func: ml4gw.distributions.PowerLaw
-        args: [4,100,-3] 
+        args: [20,100,-3] 
