@@ -15,7 +15,7 @@ import importlib
 def injection(config, data_dir: str, device: str, inject: bool):
 
     ifos = config.general.ifos
-    num_waveforms = config.general.num_waveforms
+    batch_size = config.general.batch_size
     sample_rate = config.general.sample_rate
     f_min = config.general.f_min
     kernel_length = config.general.waveform_duration
@@ -41,7 +41,7 @@ def injection(config, data_dir: str, device: str, inject: bool):
         fnames=fnames,
         channels=ifos,
         kernel_size=int(window_length * sample_rate),
-        batch_size=num_waveforms,  
+        batch_size=batch_size,  
         batches_per_epoch=1,  # Just doing 1 here for demonstration purposes
         coincident=False,
     )
@@ -61,7 +61,7 @@ def injection(config, data_dir: str, device: str, inject: bool):
     ).to(device)
 
     psd = spectral_density(background_samples[..., :psd_size].double())
-    print(f"PSD shape: {psd.shape}")
+    #print(f"PSD shape: {psd.shape}")
     kernel = background_samples[..., psd_size:]
 
     if inject:
@@ -82,9 +82,8 @@ def injection(config, data_dir: str, device: str, inject: bool):
         module = importlib.import_module(module_name)
         func = getattr(module, func_name)
         args = config.snr_reweighting.args
-        target_snrs = func(*args).sample((num_waveforms,)).to(device)
+        target_snrs = func(*args).sample((batch_size,)).to(device)
 
-        #target_snrs = PowerLaw(4, 100, -3).sample((num_waveforms,)).to(device)
         waveforms = reweight_snrs(responses=waveforms,target_snrs=target_snrs,psd=psd,sample_rate=sample_rate,highpass=f_min,)
 
         injected[:, :, pad:-pad] += waveforms[..., -kernel_size:]
@@ -97,8 +96,8 @@ def injection(config, data_dir: str, device: str, inject: bool):
         whitened_injected = whiten(kernel, psd)
         params = None
 
-    print(f"Kernel shape: {kernel.shape}")
-    print(f"Whitened kernel shape: {whitened_injected.shape}")
+    #print(f"Kernel shape: {kernel.shape}")
+    #print(f"Whitened kernel shape: {whitened_injected.shape}")
     return whitened_injected, params
 
 if __name__ == "__main__":

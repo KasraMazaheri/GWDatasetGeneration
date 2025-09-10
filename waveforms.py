@@ -14,7 +14,7 @@ from utils import load_config
 def generate_signals(config, device: str, save: bool):
     
     waveform_duration = config.general.waveform_duration
-    num_waveforms = config.general.num_waveforms
+    batch_size = config.general.batch_size
     sample_rate = config.general.sample_rate
     ifos = config.general.ifos
     f_min = config.general.f_min
@@ -51,7 +51,7 @@ def generate_signals(config, device: str, save: bool):
         if k == 'mass_2':
             params[k] = param_dict[k].sample().to(device)
         else:
-            params[k] = param_dict[k].sample((num_waveforms,)).to(device)
+            params[k] = param_dict[k].sample((batch_size,)).to(device)
 
     if config.general.type=='BNS':
 
@@ -88,9 +88,9 @@ def generate_signals(config, device: str, save: bool):
     psi = Uniform(0, torch.pi)
     phi = Uniform(-torch.pi, torch.pi)
     
-    params['dec'] = dec.sample((num_waveforms,)).to(device)
-    params['psi'] = psi.sample((num_waveforms,)).to(device)
-    params['phi'] = phi.sample((num_waveforms,)).to(device)
+    params['dec'] = dec.sample((batch_size,)).to(device)
+    params['psi'] = psi.sample((batch_size,)).to(device)
+    params['phi'] = phi.sample((batch_size,)).to(device)
 
     tensors, vertices = get_ifo_geometry(*ifos)
 
