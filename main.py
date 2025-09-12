@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 def main(config_path: str, data_dir: str, output_dir: str):
     device = "cuda" if torch.cuda.is_available() else "cpu"
-    config = load_config(args.config)
+    config = load_config(config_path)
 
     data_dir = Path(data_dir)
     out_dir = Path(output_dir)
