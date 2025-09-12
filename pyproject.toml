@@ -1,0 +1,18 @@
+[project]
+name = "gwdatasetgeneration"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "gwpy>=3.0.13",
+    "h5py>=3.14.0",
+    "matplotlib>=3.10.6",
+    "ml4gw>=0.4.2",
+    "numpy>=2.3.3",
+    "pre-commit>=4.3.0",
+    "pyyaml>=6.0.2",
+    "requests>=2.32.5",
+    "torch>=2.8.0",
+    "tqdm>=4.67.1",
+]

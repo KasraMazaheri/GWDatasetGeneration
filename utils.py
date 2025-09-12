@@ -1,6 +1,7 @@
 import yaml
 from types import SimpleNamespace
 
+
 def dict_to_namespace(d):
     ns = SimpleNamespace()
     for k, v in d.items():
@@ -8,6 +9,7 @@ def dict_to_namespace(d):
             v = dict_to_namespace(v)
         setattr(ns, k, v)
     return ns
+
 
 def load_config(config_path: str):
     with open(config_path) as f:
