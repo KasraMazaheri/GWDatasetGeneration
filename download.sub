@@ -1,0 +1,9 @@
+executable = /home/barmstrong/cluster/htcondor/cuda_wrapper.sh
+arguments = /home/barmstrong/.local/bin/uv run --no-sync load_data.py
+error = $(Cluster).err
+output = $(Cluster).out
+log = $(Cluster).log
+request_memory = 32000
+request_cpus = 8
+
+queue
