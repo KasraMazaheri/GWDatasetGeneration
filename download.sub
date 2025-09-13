@@ -1,5 +1,5 @@
-executable = /home/barmstrong/cluster/htcondor/cuda_wrapper.sh
-arguments = /home/barmstrong/.local/bin/uv run --no-sync load_data.py
+executable = /home/barmstrong/.local/bin/uv
+arguments = run --no-sync load_data.py
 error = $(Cluster).err
 output = $(Cluster).out
 log = $(Cluster).log
