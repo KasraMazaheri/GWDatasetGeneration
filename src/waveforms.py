@@ -1,11 +1,13 @@
+import importlib
+
 import torch
 from ml4gw.distributions import Cosine
-from torch.distributions import Uniform
-import importlib
+from ml4gw.gw import compute_observed_strain, get_ifo_geometry
 from ml4gw.waveforms import IMRPhenomD, TaylorF2
-from ml4gw.waveforms.generator import TimeDomainCBCWaveformGenerator
 from ml4gw.waveforms.conversion import chirp_mass_and_mass_ratio_to_components
-from ml4gw.gw import get_ifo_geometry, compute_observed_strain
+from ml4gw.waveforms.generator import TimeDomainCBCWaveformGenerator
+from torch.distributions import Uniform
+
 from utils import load_config
 
 

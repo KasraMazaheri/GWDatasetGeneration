@@ -1,12 +1,14 @@
-from utils import load_config
-from injections import injection
-import torch
 import argparse
-from pathlib import Path
-import h5py
-import os
 import gc
+import os
+from pathlib import Path
+
+import h5py
+import torch
 from tqdm import tqdm
+
+from injections import injection
+from utils import load_config
 
 
 def main(config_path: str, data_dir: str, output_dir: str):

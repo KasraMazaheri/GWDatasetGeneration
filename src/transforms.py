@@ -1,10 +1,8 @@
 from numbers import Number
 
 import torch
-from torch.distributions import constraints
+from torch.distributions import Distribution, Uniform, constraints
 from torch.distributions.utils import broadcast_all
-
-from torch.distributions import Distribution, Uniform
 
 
 class Triangular(Distribution):

@@ -1,12 +1,13 @@
-from ml4gw.transforms import SpectralDensity
-import torch
+import importlib
 from pathlib import Path
+
+import torch
 from ml4gw.dataloading import Hdf5TimeSeriesDataset
-from ml4gw.transforms import Whiten
+from ml4gw.gw import compute_network_snr, reweight_snrs
+from ml4gw.transforms import SpectralDensity, Whiten
+
 from utils import load_config
 from waveforms import generate_signals
-from ml4gw.gw import compute_network_snr, reweight_snrs
-import importlib
 
 
 def injection(config, data_dir: str, device: str, inject: bool):

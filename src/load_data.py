@@ -1,13 +1,14 @@
-from gwpy.timeseries import TimeSeries, TimeSeriesDict
-from utils import load_config
+import operator
+from functools import reduce
 from pathlib import Path
 
 # from gwosc import api,datasets
 import requests
 from gwpy.segments import Segment, SegmentList
-from functools import reduce
-import operator
+from gwpy.timeseries import TimeSeries, TimeSeriesDict
 from tqdm import tqdm
+
+from utils import load_config
 
 BASE_URL = "https://gwosc.org/api/v2/runs/O3a/timelines"
 
