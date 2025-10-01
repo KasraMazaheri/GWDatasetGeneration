@@ -9,6 +9,7 @@ general:
     f_ref: 50
     ifos: ['H1','L1']
     batch_size: 350
+    seed: 42
 
 waveform:
     mass_1:
@@ -41,4 +42,4 @@ whiten:
 
 snr_reweighting: 
         func: ml4gw.distributions.PowerLaw
-        args: [20,100,-3] 
+        args: [8,100,-3] 

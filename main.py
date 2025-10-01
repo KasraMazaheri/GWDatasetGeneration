@@ -7,6 +7,7 @@ import h5py
 import os
 import gc
 from tqdm import tqdm
+from set_seed import set_seed 
 
 def main(config_path: str, data_dir: str, output_dir: str):
 
@@ -17,6 +18,8 @@ def main(config_path: str, data_dir: str, output_dir: str):
     out_dir = Path(output_dir)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+
+    set_seed(config.general.seed)
 
     total = 0
     with tqdm(total=config.general.num_waveforms, desc="Processing", unit="step") as pbar:
