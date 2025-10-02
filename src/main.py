@@ -6,6 +6,7 @@ from pathlib import Path
 import h5py
 import torch
 from tqdm import tqdm
+from set_seed import set_seed 
 
 from injections import injection
 from utils import load_config
@@ -19,6 +20,8 @@ def main(config_path: str, data_dir: str, output_dir: str):
     out_dir = Path(output_dir)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
+
+    set_seed(config.general.seed)
 
     total = 0
     with tqdm(
