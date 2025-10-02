@@ -1,6 +1,6 @@
 general:
     type: 'BNS'
-    num_waveforms: 100000
+    num_waveforms: 50000
     waveform_duration: 64 #desired duration of time-domain waveform
     sample_rate: 2048
     right_pad: 1.0 #coalescence point of signal [s] from right edge of window
@@ -9,7 +9,7 @@ general:
     f_ref: 50
     ifos: ['H1', 'L1']
     batch_size: 350
-    seed: 42
+    seed: 0
 
 waveform:
     mass_1:

@@ -1,5 +1,5 @@
 executable = /home/barmstrong/cluster/htcondor/cuda_wrapper.sh
-arguments = /home/barmstrong/.local/bin/uv run --no-sync src/main.py --config configs/config_BNS.yaml --data /fast/barmstrong/ligoss/data/gw3/background_data --out /fast/barmstrong/ligoss/data/bns
+arguments = /home/barmstrong/.local/bin/uv run --no-sync src/main.py --config configs/config_BNS_train.yaml --data /fast/barmstrong/ligoss/data/gw3/background_data --out /fast/barmstrong/ligoss/data/bns_train
 error = $(Cluster).err
 output = $(Cluster).out
 log = $(Cluster).log
