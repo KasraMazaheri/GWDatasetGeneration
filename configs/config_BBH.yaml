@@ -1,6 +1,6 @@
 general:
     type: BBH
-    num_waveforms: 5000
+    num_waveforms: 100000
     waveform_duration: 8 #desired duration of time-domain waveform
     sample_rate: 2048
     right_pad: 0.5 #coalescence point of signal [s] from right edge of window
