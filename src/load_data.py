@@ -64,6 +64,6 @@ def load_data(config, data_dir: str):
 
 
 if __name__ == "__main__":
-    config = load_config(config_path="configs/config_BNS.yaml")
-    data_dir = Path("/fast/barmstrong/ligoss/data/gw3")
+    config = load_config(config_path="configs/config_BNS_train.yaml")
+    data_dir = Path("data/")
     load_data(config, data_dir)
